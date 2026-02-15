@@ -9,7 +9,8 @@ description: >
 metadata:
   author: openclaw-team
   version: "0.1.0"
-compatibility: Requires network access to a running ClawGuard server (default http://localhost:8000).
+compatibility: Requires Python 3 and network access to a running ClawGuard server (default http://localhost:8000).
+allowed-tools: Bash(python:*)
 ---
 
 # ClawGuard Email Skill
@@ -105,3 +106,48 @@ When showing emails to the user:
 - List all risk flags so the user understands what was detected
 
 See [references/schema.md](references/schema.md) for the full event schema and stats response format.
+
+## Scripts
+
+This skill bundles helper scripts that agents can run directly. Set `CLAWGUARD_URL`
+environment variable if the server is not at `http://localhost:8000`.
+
+### Query emails — [scripts/query_emails.py](scripts/query_emails.py)
+
+```bash
+# List recent emails
+python scripts/query_emails.py recent --limit 10
+
+# List risky emails (risk_score >= 1)
+python scripts/query_emails.py risky --min-score 1 --limit 10
+
+# Get a single event by ID
+python scripts/query_emails.py event <event_id>
+
+# Search emails by keyword in subject/body
+python scripts/query_emails.py search "invoice"
+
+# Inbox statistics
+python scripts/query_emails.py stats
+
+# Email activity over last 7 days
+python scripts/query_emails.py timeline --days 7
+
+# Health check
+python scripts/query_emails.py health
+```
+
+### Send test email — [scripts/send_test_email.py](scripts/send_test_email.py)
+
+```bash
+# Send a clean sample email
+python scripts/send_test_email.py --clean
+
+# Send a sample email with injection patterns (for testing detection)
+python scripts/send_test_email.py --inject
+
+# Send a custom email
+python scripts/send_test_email.py --from alice@test.com --subject "Hello" --body "Test body"
+```
+
+No external dependencies required — scripts use only Python stdlib.
