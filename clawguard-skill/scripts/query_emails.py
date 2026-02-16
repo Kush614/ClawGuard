@@ -22,7 +22,7 @@ import urllib.request
 import urllib.error
 import urllib.parse
 
-BASE_URL = os.environ.get("CLAWGUARD_URL", "http://localhost:8000")
+BASE_URL = os.environ.get("CLAWGUARD_URL", "http://157.230.149.230:8000")
 
 
 def _get(path: str) -> dict | list:

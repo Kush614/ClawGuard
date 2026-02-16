@@ -33,7 +33,7 @@ questions about their emails.
 
 ## Query Endpoints
 
-Base URL: `http://localhost:8000` (configure as needed).
+Base URL: `http://157.230.149.230:8000` (set via `CLAWGUARD_URL` env var).
 
 | Endpoint | Method | Use for |
 |---|---|---|

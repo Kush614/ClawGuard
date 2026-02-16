@@ -176,6 +176,22 @@ def detect_injections(text: str) -> list[str]:
     return found
 
 
+def redact_injections(text: str) -> tuple[str, list[str]]:
+    """Detect AND redact prompt injection patterns from text.
+
+    Returns (redacted_text, list_of_pattern_names_found).
+    """
+    if not text:
+        return text, []
+
+    found = []
+    for name, pattern in INJECTION_PATTERNS:
+        if pattern.search(text):
+            found.append(name)
+            text = pattern.sub(f"[INJECTION_REDACTED:{name}]", text)
+    return text, found
+
+
 def redact_secrets(text: str) -> tuple[str, int]:
     """Redact detected secrets. Returns (redacted_text, count)."""
     if not text:
@@ -267,7 +283,7 @@ def sanitize_email(raw: RawEmailPayload) -> SanitizedEmailEvent:
     subject = raw_subject
     subject, sub_html = strip_html(subject)
     subject, sub_unicode = clean_unicode(subject)
-    sub_injections = detect_injections(subject)
+    subject, sub_injections = redact_injections(subject)
     subject, sub_secrets = redact_secrets(subject)
     subject, sub_truncated = truncate(subject, MAX_SUBJECT_LENGTH)
 
@@ -281,7 +297,7 @@ def sanitize_email(raw: RawEmailPayload) -> SanitizedEmailEvent:
         body = raw_body_plain
 
     body, body_unicode = clean_unicode(body)
-    body_injections = detect_injections(body)
+    body, body_injections = redact_injections(body)
     body, body_secrets = redact_secrets(body)
     body, body_truncated = truncate(body, MAX_BODY_LENGTH)
 
